@@ -1,0 +1,18 @@
+🏡 Capstone-02: House Price Predictor
+
+I built a Multiple Linear Regression project with an interactive Streamlit interface using historical housing records.
+
+Features: property input form, city-based location encoding, price estimates, dataset exploration, and held-out model evaluation.
+
+Dataset: 4,600 original records; 4,551 after removing nonpositive prices.
+Test results (20% split):
+• MAE: 131,870 dataset price units
+• RMSE: 219,399 dataset price units
+• R²: 0.676
+
+This educational tool estimates historical prices and is not a formal appraisal or a current-market valuation.
+
+Live app: [insert your deployed link]
+GitHub: [insert your repository link]
+
+#MachineLearning #Python #Streamlit #DataScience #LinearRegression #CapstoneProject

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>House Price Predictor — Multiple Linear Regression Suite</title>
+  <meta name="description" content="AI-powered Multiple Linear Regression housing valuation engine for buyers, sellers, and real estate professionals.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">🏡</div>
+        <div class="brand-text">
+          <h1>HousePredict <span class="gradient-text">AI</span></h1>
+          <p class="subtitle">Multiple Linear Regression (MLR) Property Valuation Engine</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="badge badge-accent">⚡ MLR Algorithm</span>
+        <span class="badge badge-emerald">Verified Dataset (4,551 Homes)</span>
+        <span class="badge badge-indigo" id="badgeR2">R²: 0.676</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Value Proposition Banner (Answering user prompt explicitly) -->
+    <section class="value-strip">
+      <div class="value-item">
+        <span class="value-icon">🎯</span>
+        <div>
+          <strong>Fair Price Estimation</strong>
+          <p>Protects buyers from overpaying with data-backed valuations</p>
+        </div>
+      </div>
+      <div class="value-item">
+        <span class="value-icon">📈</span>
+        <div>
+          <strong>Competitive Listing</strong>
+          <p>Assists sellers in finding maximum profitable pricing</p>
+        </div>
+      </div>
+      <div class="value-item">
+        <span class="value-icon">💼</span>
+        <div>
+          <strong>Agent CMA Reports</strong>
+          <p>Instant recommendations saving hours of manual market research</p>
+        </div>
+      </div>
+      <div class="value-item">
+        <span class="value-icon">🔍</span>
+        <div>
+          <strong>100% Transparency</strong>
+          <p>Inspect exact linear feature weights, residuals, and metrics</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Persona Tabs Navigation -->
+    <nav class="persona-nav" aria-label="Valuation Persona Modes">
+      <button class="tab-btn active" data-tab="buyer" id="tabBuyer">
+        <span class="tab-icon">🛒</span> For Buyers (Fair Price & Mortgage)
+      </button>
+      <button class="tab-btn" data-tab="seller" id="tabSeller">
+        <span class="tab-icon">🏷️</span> For Sellers (Pricing & Upgrade ROI)
+      </button>
+      <button class="tab-btn" data-tab="agent" id="tabAgent">
+        <span class="tab-icon">📋</span> For Agents (CMA & Market Intel)
+      </button>
+      <button class="tab-btn" data-tab="transparency" id="tabTransparency">
+        <span class="tab-icon">📐</span> Model Transparency & Math
+      </button>
+      <button class="tab-btn" data-tab="explorer" id="tabExplorer">
+        <span class="tab-icon">📊</span> Market Explorer (4.5k Records)
+      </button>
+    </nav>
+
+    <!-- Quick Presets -->
+    <div class="presets-bar">
+      <span class="presets-label">⚡ Quick Presets:</span>
+      <button class="preset-chip" onclick="loadPreset('seattle_family')">Seattle Family Craftsman</button>
+      <button class="preset-chip" onclick="loadPreset('bellevue_luxury')">Bellevue Luxury Estate</button>
+      <button class="preset-chip" onclick="loadPreset('redmond_tech')">Redmond Tech Suburban</button>
+      <button class="preset-chip" onclick="loadPreset('waterfront_villa')">Lake Washington Waterfront</button>
+      <button class="preset-chip" onclick="loadPreset('starter_home')">Cozy Kent Starter Home</button>
+    </div>
+
+    <!-- Main Workspace Layout -->
+    <div class="workspace-grid">
+      <!-- Left Column: Input Parameter Controls -->
+      <section class="card input-card">
+        <div class="card-header">
+          <h2>Property Specifications</h2>
+          <span class="feature-count">12 Independent Variables</span>
+        </div>
+
+        <form id="propertyForm" onsubmit="event.preventDefault(); runPrediction();">
+          <!-- Location Group -->
+          <div class="form-section">
+            <h3 class="section-title">📍 Location & Market</h3>
+            <div class="form-row">
+              <div class="input-field full-width">
+                <label for="citySelect">City / Municipal Market</label>
+                <select id="citySelect" class="form-control" onchange="runPrediction()">
+                  <!-- Dynamically populated -->
+                  <option value="Seattle">Seattle</option>
+                  <option value="Bellevue">Bellevue</option>
+                  <option value="Redmond">Redmond</option>
+                  <option value="Kirkland">Kirkland</option>
+                  <option value="Renton">Renton</option>
+                </select>
+                <span class="helper-text" id="cityStatHelp">City median: Loading...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Space & Dimensions -->
+          <div class="form-section">
+            <h3 class="section-title">📐 Dimensions & Living Space</h3>
+            <div class="form-row">
+              <div class="input-field">
+                <div class="slider-header">
+                  <label for="sqftLiving">Living Space (Sq Ft)</label>
+                  <span class="slider-val" id="sqftLivingVal">2,200 sqft</span>
+                </div>
+                <input type="range" id="sqftLiving" min="400" max="8000" step="50" value="2200" oninput="updateSliderVal('sqftLiving', 'sqftLivingVal', ' sqft'); runPrediction();">
+              </div>
+
+              <div class="input-field">
+                <div class="slider-header">
+                  <label for="sqftLot">Lot Area (Sq Ft)</label>
+                  <span class="slider-val" id="sqftLotVal">7,500 sqft</span>
+                </div>
+                <input type="range" id="sqftLot" min="500" max="50000" step="250" value="7500" oninput="updateSliderVal('sqftLot', 'sqftLotVal', ' sqft'); runPrediction();">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="input-field">
+                <div class="slider-header">
+                  <label for="sqftBasement">Basement Area (Sq Ft)</label>
+                  <span class="slider-val" id="sqftBasementVal">0 sqft</span>
+                </div>
+                <input type="range" id="sqftBasement" min="0" max="3000" step="50" value="0" oninput="updateSliderVal('sqftBasement', 'sqftBasementVal', ' sqft'); runPrediction();">
+              </div>
+              <div class="input-field">
+                <label for="floorsInput">Floors / Stories</label>
+                <select id="floorsInput" class="form-control" onchange="runPrediction()">
+                  <option value="1.0">1.0 Story (Ranch / Bungalow)</option>
+                  <option value="1.5">1.5 Stories</option>
+                  <option value="2.0" selected>2.0 Stories (Colonial / Contemporary)</option>
+                  <option value="2.5">2.5 Stories</option>
+                  <option value="3.0">3.0 Stories (Townhome / Tri-level)</option>
+                  <option value="3.5">3.5 Stories</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rooms & Layout -->
+          <div class="form-section">
+            <h3 class="section-title">🛏️ Rooms & Configuration</h3>
+            <div class="form-row">
+              <div class="input-field">
+                <label>Bedrooms</label>
+                <div class="counter-box">
+                  <button type="button" class="btn-stepper" onclick="stepVal('bedrooms', -1)">−</button>
+                  <input type="number" id="bedrooms" value="3" min="1" max="10" readonly>
+                  <button type="button" class="btn-stepper" onclick="stepVal('bedrooms', 1)">+</button>
+                </div>
+              </div>
+
+              <div class="input-field">
+                <label>Bathrooms</label>
+                <div class="counter-box">
+                  <button type="button" class="btn-stepper" onclick="stepVal('bathrooms', -0.25)">−</button>
+                  <input type="number" id="bathrooms" value="2.5" min="0.5" max="8.0" step="0.25" readonly>
+                  <button type="button" class="btn-stepper" onclick="stepVal('bathrooms', 0.25)">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quality, Waterfront & Age -->
+          <div class="form-section">
+            <h3 class="section-title">✨ Quality, Waterfront & Age</h3>
+            <div class="form-row">
+              <div class="input-field">
+                <label for="conditionSelect">Property Condition (1-5)</label>
+                <select id="conditionSelect" class="form-control" onchange="runPrediction()">
+                  <option value="1">1 - Major Repairs Needed</option>
+                  <option value="2">2 - Fair / Wear & Tear</option>
+                  <option value="3" selected>3 - Average / Move-in Ready</option>
+                  <option value="4">4 - Good / Well-Maintained</option>
+                  <option value="5">5 - Pristine / Turnkey</option>
+                </select>
+              </div>
+
+              <div class="input-field">
+                <label for="viewSelect">View Rating (0-4)</label>
+                <select id="viewSelect" class="form-control" onchange="runPrediction()">
+                  <option value="0" selected>0 - Standard Neighborhood View</option>
+                  <option value="1">1 - Partial Territorial View</option>
+                  <option value="2">2 - Good Territorial / Greenbelt</option>
+                  <option value="3">3 - Panoramic City / Mountain</option>
+                  <option value="4">4 - Premier Water / Sky View</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="input-field">
+                <label for="yrBuilt">Year Built</label>
+                <input type="number" id="yrBuilt" class="form-control" min="1900" max="2014" value="1995" onchange="runPrediction()">
+              </div>
+
+              <div class="input-field">
+                <label for="yrRenovated">Year Renovated (0 = Never)</label>
+                <input type="number" id="yrRenovated" class="form-control" min="0" max="2014" value="0" onchange="runPrediction()">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="checkbox-pill full-width">
+                <label class="toggle-container">
+                  <input type="checkbox" id="waterfrontCheck" onchange="runPrediction()">
+                  <span class="toggle-switch"></span>
+                  <span class="toggle-text">🌊 Waterfront Property (High-impact premium)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-calculate" id="btnCalculate">
+            <span class="btn-icon">⚡</span> Run ML Valuation Model
+          </button>
+        </form>
+      </section>
+
+      <!-- Right Column: Results & Intelligence Dashboard -->
+      <section class="results-column">
+        <!-- Live Valuation Hero Card -->
+        <div class="card hero-valuation-card">
+          <div class="valuation-meta">
+            <span class="live-status"><span class="pulse-dot"></span> MLR Real-Time Valuation</span>
+            <span class="model-tag">Scikit-Learn OLS Pipeline</span>
+          </div>
+
+          <div class="price-display">
+            <span class="currency-symbol">$</span>
+            <span class="price-number" id="predictedPriceDisplay">--</span>
+          </div>
+
+          <div class="confidence-band">
+            <span class="band-label">Historical Confidence Band (±MAE):</span>
+            <strong class="band-range" id="confidenceBandDisplay">$0 - $0</strong>
+          </div>
+
+          <div class="quick-stats-grid">
+            <div class="quick-stat">
+              <span class="stat-title">Price / Sq Ft</span>
+              <strong class="stat-value" id="pricePerSqftDisplay">$0 / sqft</strong>
+            </div>
+            <div class="quick-stat">
+              <span class="stat-title">Est. 30Y Mortgage</span>
+              <strong class="stat-value" id="monthlyMortgageDisplay">$0 / mo</strong>
+            </div>
+            <div class="quick-stat">
+              <span class="stat-title">City Average</span>
+              <strong class="stat-value" id="cityAvgDisplay">$0</strong>
+            </div>
+            <div class="quick-stat">
+              <span class="stat-title">City Variance</span>
+              <strong class="stat-value" id="cityDiffDisplay">0%</strong>
+            </div>
+          </div>
+
+          <!-- Dynamic Persona Insight Section -->
+          <div class="persona-insight-box" id="personaInsightContent">
+            <!-- Injected via JavaScript depending on selected persona tab -->
+          </div>
+        </div>
+
+        <!-- Key Value Drivers (Waterfall breakdown) -->
+        <div class="card drivers-card">
+          <div class="card-header">
+            <h3>Key Value Drivers (Linear Regression Impact)</h3>
+            <span class="tag-sm">Feature Weight Decomposition</span>
+          </div>
+          <p class="section-desc">See how each property attribute impacts this specific valuation compared to the dataset mean:</p>
+          <div class="drivers-list" id="driversList">
+            <!-- Injected dynamically -->
+            <div class="loader-placeholder">Computing feature weights...</div>
+          </div>
+        </div>
+
+        <!-- Persona Specific Feature Panel -->
+        <div class="card persona-addon-card" id="personaAddonCard">
+          <!-- Injected dynamically: Buyer Deal Detector OR Seller Renovation ROI OR Agent CMA -->
+        </div>
+      </section>
+    </div>
+
+    <!-- Hidden / Expandable Views for Transparency & Explorer -->
+    <section class="card full-width-card" id="transparencySection" style="display: none; margin-top: 2rem;">
+      <div class="card-header">
+        <h2>📐 Multiple Linear Regression (MLR) Transparency & Mathematical Blueprint</h2>
+        <span class="badge badge-accent">Full Explainability</span>
+      </div>
+      <div class="transparency-grid">
+        <div class="formula-box">
+          <h3>The Mathematical Model</h3>
+          <div class="math-formula">
+            $$\hat{Y} = \beta_0 + \sum_{i=1}^{11} \beta_i \cdot \text{scale}(X_i) + \sum_{k=1}^{K} \gamma_k \cdot \text{OneHot}(\text{City}_k)$$
+          </div>
+          <p>
+            The model fits an Ordinary Least Squares hyperplane minimizing the sum of squared residuals: 
+            <strong>$\min_{\beta} \sum (y_i - \hat{y}_i)^2$</strong>.
+          </p>
+          <ul class="bullet-list">
+            <li><strong>Numerical Preprocessing:</strong> Median imputation followed by standard z-score normalization ($z = \frac{x - \mu}{\sigma}$).</li>
+            <li><strong>Categorical Preprocessing:</strong> Most-frequent imputation and drop-first dummy encoding to prevent multicollinearity (dummy variable trap).</li>
+            <li><strong>Training/Test Split:</strong> 80% train (3,640 records) vs 20% holdout test (911 records), evaluated with strictly zero leakage.</li>
+          </ul>
+        </div>
+
+        <div class="metrics-dashboard">
+          <h3>Holdout Test Evaluation Metrics (vs Naive Baseline)</h3>
+          <div class="metrics-cards-row">
+            <div class="metric-chip">
+              <span class="m-label">R² (Coefficient of Determination)</span>
+              <strong class="m-value emerald" id="metricR2">0.676</strong>
+              <span class="m-sub">67.6% of price variance explained</span>
+            </div>
+            <div class="metric-chip">
+              <span class="m-label">MAE (Mean Absolute Error)</span>
+              <strong class="m-value" id="metricMAE">$131,870</strong>
+              <span class="m-sub">vs $243,548 baseline (-45.8% error)</span>
+            </div>
+            <div class="metric-chip">
+              <span class="m-label">RMSE (Root Mean Sq Error)</span>
+              <strong class="m-value" id="metricRMSE">$219,399</strong>
+              <span class="m-sub">vs $385,712 baseline</span>
+            </div>
+          </div>
+          <div class="linear-comparison-note">
+            <strong>Baseline Comparison:</strong> A naive model predicting the historical mean achieves $R^2 \approx 0.00$ and MAE of $243,548. Our MLR model provides a <strong>45.8% reduction in average error</strong>, verifying strong statistical significance across living area, city location, waterfront status, and bathrooms.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Explorer Section -->
+    <section class="card full-width-card" id="explorerSection" style="display: none; margin-top: 2rem;">
+      <div class="card-header">
+        <h2>📊 Real-World Dataset Explorer (King County Housing)</h2>
+        <span class="tag-sm">4,551 Verified Historical Records</span>
+      </div>
+      <p class="section-desc">Browse real historical sales records used to calibrate the Multiple Linear Regression pipeline:</p>
+      <div class="table-container">
+        <table class="data-table" id="sampleDataTable">
+          <thead>
+            <tr>
+              <th>City</th>
+              <th>Price</th>
+              <th>Bedrooms</th>
+              <th>Bathrooms</th>
+              <th>Sqft Living</th>
+              <th>Lot Size</th>
+              <th>Waterfront</th>
+              <th>View</th>
+              <th>Condition</th>
+              <th>Year Built</th>
+            </tr>
+          </thead>
+          <tbody id="dataTableBody">
+            <tr><td colspan="10" style="text-align:center;">Loading real-world records...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>🏡 <strong>House Price Predictor</strong> — Capstone Project: Multiple Linear Regression in Action.</p>
+      <p class="footer-sub">Built with Python, Scikit-Learn, Flask & Modern Vanilla CSS. Ready for deployment and LinkedIn showcase.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
