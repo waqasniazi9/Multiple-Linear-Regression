@@ -13,6 +13,6 @@ Test results (20% split):
 This educational tool estimates historical prices and is not a formal appraisal or a current-market valuation.
 
 Live app: [insert your deployed link]
-GitHub: [insert your repository link]
+GitHub: https://github.com/waqasniazi9/Multiple-Linear-Regression
 
 #MachineLearning #Python #Streamlit #DataScience #LinearRegression #CapstoneProject
