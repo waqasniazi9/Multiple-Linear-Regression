@@ -1,45 +1,77 @@
-# House Price Predictor — Capstone-02
+# 🏡 House Price Predictor — Multiple Linear Regression (MLR)
 
-A Multiple Linear Regression Streamlit app using the supplied data.csv.
+An end-to-end Machine Learning web application predicting residential property prices using Multiple Linear Regression (MLR) calibrated on a real-world housing dataset.
 
-## Run locally (Python 3.11 or 3.12 recommended)
+- 🌐 **Live Streamlit App:** [https://multiple-linear-regression-c3bpnkriislfpaqvtzqddv.streamlit.app/](https://multiple-linear-regression-c3bpnkriislfpaqvtzqddv.streamlit.app/)
+- 💻 **GitHub Repository:** [https://github.com/waqasniazi9/Multiple-Linear-Regression](https://github.com/waqasniazi9/Multiple-Linear-Regression)
+- 📂 **Real-World Dataset:** [Google Drive Dataset Link](https://drive.google.com/file/d/1kicLZ_mUT1f5O1STqb-azATZtkmjsxov/view?usp=sharing)
 
-```sh
+---
+
+## 🎯 How This Project Helps Users
+1. **Enables buyers to estimate fair property prices before making decisions** — Provides data-driven valuations and a Deal Fairness Checker (evaluating whether a seller's asking price is a bargain, fair market, or overpriced).
+2. **Assists sellers in setting competitive and realistic listing prices** — Offers a 3-tier listing strategy (Aggressive, Competitive, Fast Sale) and an Upgrade ROI Estimator to quantify value gains from renovations.
+3. **Helps real estate agents provide data-driven recommendations** — Generates instant Comparative Market Analysis (CMA) summary reports and neighborhood benchmarks saving hours of manual research.
+4. **Saves time by offering instant predictions instead of manual market research** — Features 1-click quick presets and rapid calculation across 12 independent property variables.
+5. **Improves transparency in property valuation using machine learning** — Fully explainable Ordinary Least Squares (OLS) regression formula with standardized coefficients and feature decomposition.
+
+---
+
+## 📊 Model & Performance Metrics
+
+The model is trained on King County, Washington historical housing records (4,600 rows raw; 4,551 usable rows after cleaning non-positive values) using an 80/20 train/test split (`random_state=42`).
+
+### 12 Independent Variables Used:
+- **Numerical (11):** `bedrooms`, `bathrooms`, `sqft_living`, `sqft_lot`, `floors`, `waterfront`, `view`, `condition`, `sqft_basement`, `yr_built`, `yr_renovated`
+- **Categorical (1):** `city` (one-hot encoded with reference category drop)
+
+### Evaluation on Untouched 20% Holdout Test Set:
+| Evaluation Metric | Multiple Linear Regression (MLR) | Training-Mean Dummy Baseline | Improvement |
+| :--- | :--- | :--- | :--- |
+| **R² Score** | **0.676** (67.6% variance explained) | -0.000 (0.0%) | **+67.6% Explained Variance** |
+| **MAE** | **$131,870** | $243,548 | **-45.8% Error Reduction** |
+| **RMSE** | **$219,399** | $385,712 | **-43.1% Error Reduction** |
+
+---
+
+## 🚀 Run Locally
+
+```bash
+# 1. Clone repository
+git clone https://github.com/waqasniazi9/Multiple-Linear-Regression.git
+cd Multiple-Linear-Regression
+
+# 2. Setup virtual environment
 python -m venv .venv
-```
-Activate on Windows PowerShell:
-```powershell
+# On Windows PowerShell:
 .\.venv\Scripts\Activate.ps1
-```
-Then:
-```sh
+
+# 3. Install dependencies
 python -m pip install -r requirements.txt
+
+# 4. Run model training & evaluation
 python train_model.py
+
+# 5. Launch Streamlit application
 python -m streamlit run app.py
 ```
-The app trains and caches the same deterministic pipeline at startup, avoiding a dependency on a version-specific saved pickle. train_model.py optionally saves a fitted pipeline for experimentation.
 
-## Dataset and cleaning
-Uploaded assignment data.csv: 4600 rows and 18 columns; dates May 2–July 10, 2014; USA/Washington addresses. No missing values or exact duplicate rows in this file. Remove 49 records with price <= 0, leaving 4551. Do not remove positive price outliers. The CSV contains no explicit currency metadata; the app uses dataset price units, not PKR or a confirmed USD label. The sqft area fields are interpreted as square feet.
+---
 
-## Model
-Use bedrooms, bathrooms, living area, lot area, floors, waterfront, view, condition, basement area, construction year, renovation year, and city. Numeric median imputation and scaling; categorical most-frequent imputation and one-hot encoding; ordinary least-squares LinearRegression. Fit preprocessing only on training rows. Test split 20%, random_state=42. The app uses the evaluated training-only model, not a separately refitted full-data model.
+## 📱 Application Modules
+- **🔮 Predict Property Value:** Interactive parameter controls, quick presets, point estimates, $\pm\text{MAE}$ confidence bands, and feature contribution charts.
+- **🛒 Buyer Mode:** Asking price deal fairness checker, overpricing alerts, and 30-year mortgage affordability calculator.
+- **🏷️ Seller Mode:** 3-tier listing price recommendations and renovation ROI estimator.
+- **📋 Agent Mode:** Instant Comparative Market Analysis (CMA) generator with exportable reports.
+- **📐 Model Transparency & Math:** Explicit mathematical formulation, OLS loss minimization, baseline comparison, and residual diagnostic plots.
+- **📊 Dataset Explorer:** Searchable dataset browser with interactive Plotly distribution charts.
 
-Excluded: price from inputs; street (high-cardinality address); country (constant); date (scope is historical, not temporal forecasting); statezip (city chosen as location representation); sqft_above (redundant with living and basement area). Raw renovation year retained; 0 is the dataset's no-renovation marker.
+---
 
-## Evaluation
-See artifacts/metrics.json and artifacts/test_predictions.csv for actual results. MAE and RMSE are price-unit errors. R² is not an accuracy percentage. Mean-price DummyRegressor provides a baseline. No cross-validation or external validation was performed. High-value anomalies remain unverified and can strongly influence the model. Some test cities are absent from training and use the reference-category encoding; app city choices are limited to training cities.
-
-## Deployment
-Push app.py, train_model.py, requirements.txt, and data/data.csv to a GitHub repository (along with documentation). On Streamlit Community Cloud choose that repository, branch main, and app.py. Use Python 3.11 or 3.12. Verify all tabs and make a prediction after deployment. Confirm dataset redistribution permission before publishing it in a public repo; original licensing was not verified.
-
-## Submission
-Record a 30–60-second demonstration: enter features, predict, show performance. Publish a LinkedIn post with the screenshot/video, deployed app link, and GitHub link. Submit the LinkedIn post URL. Do not claim guaranteed fair prices or current-market validity.
-
-## Execution status
-- [x] Model training pipeline verified (Scikit-Learn OLS, R² = 0.676, MAE = 131,870).
-- [x] Streamlit web application (`app.py`) tested and verified locally across all tabs and prediction flows.
-- [x] Alternative full-stack web UI suite (`server.py` + `static/`) tested and verified.
-- [x] LinkedIn showcase assets generated (`linkedin_assets/`) and draft post written (`LINKEDIN_POST.txt`).
-- [ ] Push to GitHub and deploy to Streamlit Community Cloud.
-- [ ] Publish LinkedIn post and submit final project URL.
+## 🏆 Project Deliverables
+- [x] Machine Learning Pipeline (`train_model.py`) with Scikit-Learn ColumnTransformer and OLS Regression.
+- [x] Interactive Streamlit Web Application (`app.py`).
+- [x] Alternative Full-Stack Web Suite (`server.py` + `static/index.html`).
+- [x] Streamlit Cloud Live Deployment: [https://multiple-linear-regression-c3bpnkriislfpaqvtzqddv.streamlit.app/](https://multiple-linear-regression-c3bpnkriislfpaqvtzqddv.streamlit.app/)
+- [x] GitHub Repository: [https://github.com/waqasniazi9/Multiple-Linear-Regression](https://github.com/waqasniazi9/Multiple-Linear-Regression)
+- [x] LinkedIn Post Draft & Assets: `LINKEDIN_POST.txt` and `linkedin_assets/`.

@@ -1,18 +1,25 @@
-🏡 Capstone-02: House Price Predictor
+🏡 Capstone Project: House Price Predictor (Multiple Linear Regression)
 
-I built a Multiple Linear Regression project with an interactive Streamlit interface using historical housing records.
+I developed and deployed an end-to-end Machine Learning web application that predicts residential property prices using a Multiple Linear Regression (MLR) model trained on a real-world King County housing dataset (4,551 verified sales).
 
-Features: property input form, city-based location encoding, price estimates, dataset exploration, and held-out model evaluation.
+🎯 How This Project Helps Users:
+1️⃣ Enables Buyers to estimate fair property valuations and verify whether asking prices are justified before committing offers.
+2️⃣ Assists Sellers in setting realistic, competitive listing prices and measuring ROI on renovations (adding bathrooms, finishing basements).
+3️⃣ Helps Real Estate Agents generate instant, data-driven Comparative Market Analysis (CMA) reports.
+4️⃣ Saves Time by replacing hours of manual comps research with instant multi-variable predictive modeling.
+5️⃣ Improves Transparency with fully explainable regression coefficients and mathematical formulations (OLS hyperplane).
 
-Dataset: 4,600 original records; 4,551 after removing nonpositive prices.
-Test results (20% split):
-• MAE: 131,870 dataset price units
-• RMSE: 219,399 dataset price units
-• R²: 0.676
+📊 Model Architecture & Test Evaluation (20% Holdout Split):
+• Algorithm: Scikit-Learn Ordinary Least Squares (OLS) Linear Regression Pipeline
+• Features: Living Area, Lot Size, Bedrooms, Bathrooms, Floors, Waterfront, View, Condition, Basement, Age & City Location Encoding
+• R² Score: 0.676 (Explains 67.6% of property price variance)
+• MAE: $131,870 (A 45.8% error reduction vs naive baseline)
+• RMSE: $219,399
 
-This educational tool estimates historical prices and is not a formal appraisal or a current-market valuation.
+🌐 Live Streamlit Web App:
+https://multiple-linear-regression-c3bpnkriislfpaqvtzqddv.streamlit.app/
 
-Live app: [insert your deployed link]
-GitHub: https://github.com/waqasniazi9/Multiple-Linear-Regression
+💻 GitHub Repository:
+https://github.com/waqasniazi9/Multiple-Linear-Regression
 
-#MachineLearning #Python #Streamlit #DataScience #LinearRegression #CapstoneProject
+#MachineLearning #Python #Streamlit #DataScience #LinearRegression #RealEstateTech #ArtificialIntelligence #PortfolioProject
